@@ -75,10 +75,12 @@ class Pagination extends React.Component{
     }
 
     onClickItem = (item) => {
+        let {currentPaginate} = this.state
         this.setState({
             ...this.state,
             active : item
         })
+
     }
 
 
@@ -143,6 +145,7 @@ class Pagination extends React.Component{
             newCurrentPaginate.sort((a, b) => a - b);
             console.log(newCurrentPaginate,'newCurrentPaginate')
             let last = newCurrentPaginate[newCurrentPaginate.length - 1]
+
             this.setState({
                 currentPaginate: newCurrentPaginate,
                 lastThreeDot: true,
@@ -176,14 +179,26 @@ class Pagination extends React.Component{
         let {lastPage,currentPaginate,limit } = this.state
         if(currentPaginate.length > 0){
             let last = currentPaginate[currentPaginate.length-2]
-            // console.log(active,'active',lastPage - 1)
-            // console.log(active != lastPage - 1,'quanque')
+            let last_one = currentPaginate[currentPaginate.length-1]
             let newCurrentPaginate = [];
-            if((last == active) && (active != lastPage - 1)){
-                for(let i = active+1; i <= active + 1 + limit && i<= lastPage;  i++){
+            if(active == last_one){
+                for(let i = active; i < active + limit && i<= lastPage;  i++){
                     newCurrentPaginate.push(i)
                 }
-                // console.log(newCurrentPaginate,'newCurrentPaginate')
+                let first = newCurrentPaginate[0]
+                this.setState({
+                    currentPaginate : newCurrentPaginate,
+                    active : first
+                })
+                console.log(newCurrentPaginate,'s')
+                return true
+            }
+
+
+            if((last == active) && (active != lastPage - 1)){
+                for(let i = active+1; i <= active + limit && i<= lastPage;  i++){
+                    newCurrentPaginate.push(i)
+                }
                 let first = newCurrentPaginate[0]
                 this.setState({
                     currentPaginate : newCurrentPaginate,
@@ -193,30 +208,10 @@ class Pagination extends React.Component{
                 if(active < lastPage){
                     this.setState({
                         active: active + 1
-                    },()=>console.log(this.state.active,'actyi'))
+                    })
                 }
             }
         }
-
-        // if(active < lastPage){
-        //     this.setState({
-        //         active : active + 1
-        //     },()=>{
-        //         let {currentPaginate,lastPage} = this.state
-        //         var arraySum = currentPaginate.map((item) => {
-        //             if(item <= lastPage){
-        //                 return item + 1
-        //             }
-        //         })
-        //         let last = arraySum[arraySum.length - 1]
-        //         if(last <= lastPage){
-        //             this.setState({
-        //                 currentPaginate : arraySum
-        //             })
-        //         }
-        //     })
-        // }
-
     }
 
     nextPaginate = (active) => {
