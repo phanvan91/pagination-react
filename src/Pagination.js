@@ -107,7 +107,7 @@ class Pagination extends React.Component{
             }
             this.setState({
                 currentPaginate : newCurrentPaginate,
-                // active : last,
+                active : last,
                 firstThreeDot:true
             },()=>{
                 let {currentPaginate,lastPage} = this.state
@@ -137,14 +137,16 @@ class Pagination extends React.Component{
         if(currentPaginate.length > 0){
             var first = currentPaginate[0];
             let newCurrentPaginate = [];
-            console.log(first,'first')
             for(let i= first; i >= first - limit + 1 && i>0;i--){
                 newCurrentPaginate.push(i)
             }
             newCurrentPaginate.sort((a, b) => a - b);
+            console.log(newCurrentPaginate,'newCurrentPaginate')
+            let last = newCurrentPaginate[newCurrentPaginate.length - 1]
             this.setState({
                 currentPaginate: newCurrentPaginate,
-                    lastThreeDot: true
+                lastThreeDot: true,
+                active : last
             },()=>{
                 let {currentPaginate,lastPage} = this.state
                 if(currentPaginate.length > 0){
@@ -171,16 +173,28 @@ class Pagination extends React.Component{
     }
 
     onClickNextPaginate = (active) => {
-        let {lastPage,currentPaginate,limit} = this.state
+        let {lastPage,currentPaginate,limit } = this.state
         if(currentPaginate.length > 0){
-            let last = currentPaginate[currentPaginate.length-1]
-            console.log(limit,'limit')
-            if(last == limit ){
-                console.log('ml')
-            }else{
+            let last = currentPaginate[currentPaginate.length-2]
+            // console.log(active,'active',lastPage - 1)
+            // console.log(active != lastPage - 1,'quanque')
+            let newCurrentPaginate = [];
+            if((last == active) && (active != lastPage - 1)){
+                for(let i = active+1; i <= active + 1 + limit && i<= lastPage;  i++){
+                    newCurrentPaginate.push(i)
+                }
+                // console.log(newCurrentPaginate,'newCurrentPaginate')
+                let first = newCurrentPaginate[0]
                 this.setState({
-                    active: active + 1
+                    currentPaginate : newCurrentPaginate,
+                    active : first
                 })
+            }else{
+                if(active < lastPage){
+                    this.setState({
+                        active: active + 1
+                    },()=>console.log(this.state.active,'actyi'))
+                }
             }
         }
 
@@ -206,8 +220,10 @@ class Pagination extends React.Component{
     }
 
     nextPaginate = (active) => {
+        let {lastPage} = this.state
+        // console.log(lastPage,'last',active,'active')
         return (
-            <li className="page-item" onClick={()=>this.onClickNextPaginate(active)}>
+            <li className={`page-item ${lastPage == active ? 'disabled' : ''}`} onClick={()=>this.onClickNextPaginate(active)}>
                 <a className="page-link" href="#">Next</a>
             </li>
         )
